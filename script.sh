@@ -1,7 +1,8 @@
 #!/bin/bash
 
-CACHE_MANIFEST_FILE='./public/mobile/cache.manifest' # Saves working directory into variable
+CACHE_MANIFEST_FILE='./private/html5/base/cache.manifest' # Saves working directory into variable
 echo "Directory test:" $CACHE_MANIFEST_FILE
+
 echo "-----------------------------------------------------"
 
 VIEWS_CONTENT=`find ./public -mindepth 3  -type f -not -path '*/\.*' | sed 's/.\/public//g'`
@@ -17,11 +18,24 @@ do
   fi
 done <<< "$VIEWS_CONTENT"
 
+echo "-----------------------------------------------------"
+
 # Searches files path in manifest that doesn't appear in ./public subfolders and deletes them.
 while IFS= read -r line 
 do
-  if [[ $line =~ ^\/ ]]
+  if [[ "$line" =~ ^\/* ]]
     then
-      sed '/\$line\/d' proof
+      is_in_directories=`grep $line $VIEWS_CONTENT | wc -l`
+      echo 'hi'
+      if [ $is_in_directories -ne 0 ]
+        then
+          echo $is_in_directories
+          awk "{gsub($line, '')}" <<< proof
+      fi
   fi
-done <<< "$VIEWS_CONTENT"
+
+  echo "-----------------------------------------------------"
+
+done <<< proof
+
+echo "-----------------------------------------------------"
