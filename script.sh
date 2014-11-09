@@ -1,41 +1,31 @@
 #!/bin/bash
+CACHE_MANIFEST_FILE='./private/html5/base/cache.manifest' # Saves file to edit into variable
 
-CACHE_MANIFEST_FILE='./private/html5/base/cache.manifest' # Saves working directory into variable
-echo "Directory test:" $CACHE_MANIFEST_FILE
+echo "CACHE MANIFEST
+# manifest version
 
-echo "-----------------------------------------------------"
+#==================================================================.
+# lists all resources that should be downloaded and stored locally |
+#=================================================================='
+CACHE:" > $CACHE_MANIFEST_FILE
 
-VIEWS_CONTENT=`find ./public -mindepth 3  -type f -not -path '*/\.*' | sed 's/.\/public//g'`
-#echo "$VIEWS_CONTENT"
+RESOURCES_CONTENT=`find ./public -mindepth 3  -type f -not -path '*/\.*' | sed 's/.\/public//g' | tr ' ' '\012'`
 
-# Searches all files in ./public and add them to manifest if are not there.
+# Searches all files in ./public and add them to manifest
 while IFS= read -r line
 do
-  count=`grep $line proof | wc -l`
-  if [ ! $count -ne 0 ]
-    then
-      echo -e "$line\r" >> proof
-  fi
-done <<< "$VIEWS_CONTENT"
+  echo -e "$line\r" >> $CACHE_MANIFEST_FILE
+done <<< "$RESOURCES_CONTENT"
 
-echo "-----------------------------------------------------"
+echo "
+#=========================================================.
+# lists all URLs that have to be loaded over the Internet |
+#========================================================='
+NETWORK:
+*
 
-# Searches files path in manifest that doesn't appear in ./public subfolders and deletes them.
-while IFS= read -r line 
-do
-  if [[ "$line" =~ ^\/* ]]
-    then
-      is_in_directories=`grep $line $VIEWS_CONTENT | wc -l`
-      echo 'hi'
-      if [ $is_in_directories -ne 0 ]
-        then
-          echo $is_in_directories
-          awk "{gsub($line, '')}" <<< proof
-      fi
-  fi
-
-  echo "-----------------------------------------------------"
-
-done <<< proof
-
-echo "-----------------------------------------------------"
+#================================================================================================================.
+# lists replacements for network URLs to be used when the browser is offline or the remote server is unavailable |
+#================================================================================================================'
+#FALLBACK:
+#/ /offline.html" >> $CACHE_MANIFEST_FILE
