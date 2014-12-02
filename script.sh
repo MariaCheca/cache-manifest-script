@@ -2,7 +2,7 @@
 CACHE_MANIFEST_FILE='./private/html5/base/cache.manifest' # Saves file to edit into variable
 
 echo "CACHE MANIFEST
-# manifest version
+# 0.0.1.0.<%= CONFIG['manifest_version'] %>.4
 
 #==================================================================.
 # lists all resources that should be downloaded and stored locally |
